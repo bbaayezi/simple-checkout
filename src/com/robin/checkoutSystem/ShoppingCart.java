@@ -4,6 +4,7 @@ import com.robin.checkoutSystem.abstractClass.DealRule;
 import com.robin.checkoutSystem.interfaces.Deal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -11,12 +12,12 @@ public class ShoppingCart {
     private Map<String, Double> productPrice;
     private Map<String, Integer> productQuantityMap;
     private List<DealRule> dealRules;
-    private List<Deal> dealBundles;
+    private List<Deal> allDeals;
 
     public Double checkout() {
         for (DealRule dealRule : dealRules) {
-            List<Deal> newDealBundles = dealRule.makeDeal(this);
-            dealBundles.addAll(newDealBundles);
+            Deal newDeal = dealRule.makeDeal(this);
+            if (newDeal != null) allDeals.add(newDeal);
         }
         return calculatePrice();
     }
@@ -29,8 +30,8 @@ public class ShoppingCart {
             res += productPrice.get(sku);
         }
         // if there are deal bundles, calculate the price of these deals
-        if (!dealBundles.isEmpty()) {
-            for (Deal deal : dealBundles) {
+        if (!allDeals.isEmpty()) {
+            for (Deal deal : allDeals) {
                 res += deal.getPrice();
             }
         }
@@ -48,8 +49,8 @@ public class ShoppingCart {
     }
 
     public void addItem(String sku) {
-        productQuantityMap.putIfAbsent(sku, 1);
         productQuantityMap.computeIfPresent(sku, (k, v) -> v = v + 1);
+        productQuantityMap.putIfAbsent(sku, 1);
     }
 
     public Map<String, Integer> getProductQuantityMap() {
@@ -57,13 +58,19 @@ public class ShoppingCart {
     }
 
     public void updateProductQuantity(String productSKU, Integer newQuantity) {
+        if (newQuantity == 0) {
+            productQuantityMap.remove(productSKU);
+            return;
+        }
         productQuantityMap.put(productSKU, newQuantity);
     }
 
     public ShoppingCart(List<String> skus, Map<String, Double> productPrice) {
         this.productPrice = productPrice;
+        productQuantityMap = new HashMap<>();
+        allDeals = new ArrayList<>();
+        dealRules = new ArrayList<>();
         initProductQuantityMap(skus);
-        dealBundles = new ArrayList<>();
     }
 
 
