@@ -20,18 +20,23 @@ public abstract class DealRule {
     public Deal makeDeal(ShoppingCart cart) {
         Map<String, Integer> productQuantityMap = cart.getProductQuantityMap();
         if (productQuantityMap.keySet().containsAll(rule.keySet())) {
-            for (String sku : rule.keySet()) {
+            Map.Entry<String, Integer> minEntry = null;
+            for (Map.Entry<String, Integer> entry : rule.entrySet()) {
+                if (minEntry == null || entry.getValue() < minEntry.getValue()) minEntry = entry;
+                String sku = entry.getKey();
                 if (rule.get(sku) > productQuantityMap.get(sku)) {
                     // can't make a deal
                     return null;
                 }
             }
             // make a deal
+            int numOfDeals = productQuantityMap.get(minEntry.getKey()) / minEntry.getValue();
             List<String> itemSKUs = new ArrayList<>();
             for (String sku : rule.keySet()) {
-                String[] arr = new String[rule.get(sku)];
+                String[] arr = new String[rule.get(sku) * numOfDeals];
                 Arrays.fill(arr, sku);
                 itemSKUs.addAll(Arrays.asList(arr));
+                cart.updateProductQuantity(sku, cart.getProductQuantityMap().get(sku) - rule.get(sku) * numOfDeals);
             }
             return new DefaultDeal(dealPrice, itemSKUs);
         }

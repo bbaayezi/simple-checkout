@@ -53,6 +53,13 @@ public class ShoppingCart {
         productQuantityMap.putIfAbsent(sku, 1);
     }
 
+    public void addItem(String... skus) {
+        for (String sku : skus) {
+            productQuantityMap.computeIfPresent(sku, (k, v) -> v = v + 1);
+            productQuantityMap.putIfAbsent(sku, 1);
+        }
+    }
+
     public Map<String, Integer> getProductQuantityMap() {
         return productQuantityMap;
     }
