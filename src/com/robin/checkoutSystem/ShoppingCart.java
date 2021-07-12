@@ -1,23 +1,21 @@
 package com.robin.checkoutSystem;
 
-import com.robin.checkoutSystem.abstractClass.DealRule;
-import com.robin.checkoutSystem.interfaces.Deal;
+import com.robin.checkoutSystem.abstractClass.AbstractDeal;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ShoppingCart {
     private Map<String, Double> productPrice;
     private Map<String, Integer> productQuantityMap;
-    private List<DealRule> dealRules;
-    private List<Deal> allDeals;
+    private List<AbstractDeal> dealRules;
+    private List<DealBundle> allDeals;
 
     public Double checkout() {
-        for (DealRule dealRule : dealRules) {
-            Deal newDeal = dealRule.makeDeal(this);
-            if (newDeal != null) allDeals.add(newDeal);
+        for (AbstractDeal dealRule : dealRules) {
+            List<DealBundle> newDealBundle = dealRule.makeDeal(this);
+            if (newDealBundle != null) {
+                allDeals.addAll(newDealBundle);
+            }
         }
         return calculatePrice();
     }
@@ -31,15 +29,15 @@ public class ShoppingCart {
         }
         // if there are deal bundles, calculate the price of these deals
         if (!allDeals.isEmpty()) {
-            for (Deal deal : allDeals) {
+            for (DealBundle deal : allDeals) {
                 res += deal.getPrice();
             }
         }
         return res;
     }
 
-    public void setDealRules(List<DealRule> dealRules) {
-        this.dealRules = dealRules;
+    public void setDealRules(List<AbstractDeal> deals) {
+        this.dealRules = deals;
     }
 
     private void initProductQuantityMap(List<String> skus) {
@@ -55,8 +53,7 @@ public class ShoppingCart {
 
     public void addItem(String... skus) {
         for (String sku : skus) {
-            productQuantityMap.computeIfPresent(sku, (k, v) -> v = v + 1);
-            productQuantityMap.putIfAbsent(sku, 1);
+            addItem(sku);
         }
     }
 
@@ -80,5 +77,16 @@ public class ShoppingCart {
         initProductQuantityMap(skus);
     }
 
-
+    public List<String> getShoppingList() {
+        List<String> res = new ArrayList<>();
+        // append skus without deals
+        for (Map.Entry<String, Integer> entry : productQuantityMap.entrySet()) {
+            res.addAll(Collections.nCopies(entry.getValue(), entry.getKey()));
+        }
+        // append skus with deals in deal bundles
+        for (DealBundle dealBundle : allDeals) {
+            res.addAll(dealBundle.getSkus());
+        }
+        return res;
+    }
 }
