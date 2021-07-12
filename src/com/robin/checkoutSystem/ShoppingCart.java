@@ -25,7 +25,7 @@ public class ShoppingCart {
         // first calculate the price of all non-deal products
         for (Map.Entry<String, Integer> entry : productQuantityMap.entrySet()) {
             String sku = entry.getKey();
-            res += productPrice.get(sku);
+            res += productPrice.get(sku) * entry.getValue();
         }
         // if there are deal bundles, calculate the price of these deals
         if (!allDeals.isEmpty()) {
