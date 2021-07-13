@@ -12,6 +12,7 @@ import java.util.logging.Logger;
 public class MultiPricedDeal extends AbstractDeal {
     private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
 
+    // minEntry is the map entry with minimum value in a multi priced deal rule
     private Map.Entry<String, Integer> minEntry = null;
 
     @Override
@@ -54,6 +55,7 @@ public class MultiPricedDeal extends AbstractDeal {
             List<String> itemSKUs = new ArrayList<>(Arrays.asList(arr));
             // update dealBundles
             dealBundles = Collections.nCopies(numOfDeals, new DealBundle(itemSKUs, this.getPrice()));
+            // update product quantity map for products that's not in a deal bundle
             cart.updateProductQuantity(sku, cart.getProductQuantityMap().get(sku) - rule.get(sku) * numOfDeals);
         }
         return dealBundles;
