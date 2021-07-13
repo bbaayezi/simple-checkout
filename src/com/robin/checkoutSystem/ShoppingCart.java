@@ -3,8 +3,12 @@ package com.robin.checkoutSystem;
 import com.robin.checkoutSystem.abstractClass.AbstractDeal;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class ShoppingCart {
+    private final Logger LOGGER = Logger.getLogger(this.getClass().getName());
+
     // product price map
     private Map<String, Double> productPrice;
     // product quantity map for products that can't make a deal
@@ -63,6 +67,10 @@ public class ShoppingCart {
      * @param sku Product SKU
      */
     public void addItem(String sku) {
+        if (!productPrice.containsKey(sku)) {
+            LOGGER.log(Level.WARNING, "Item " + sku + " not exists.");
+            return;
+        }
         productQuantityMap.computeIfPresent(sku, (k, v) -> v = v + 1);
         productQuantityMap.putIfAbsent(sku, 1);
     }

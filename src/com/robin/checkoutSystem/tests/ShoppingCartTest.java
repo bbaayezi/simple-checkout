@@ -35,6 +35,14 @@ public class ShoppingCartTest {
     }
 
     @Test
+    public void addItemThatDoesNotExist() {
+        ShoppingCart cart = new ShoppingCart(skus, productPrice);
+        cart.addItem("F");
+        assertFalse(cart.getShoppingList().contains("G"));
+        assertEquals(skus.size(), cart.getShoppingList().size());
+    }
+
+    @Test
     public void checkoutWithNoDealRule() {
         ShoppingCart cart = new ShoppingCart(skus, productPrice);
         Double finalPrice = cart.checkout();
