@@ -21,7 +21,7 @@ public class MultiPricedDeal extends AbstractDeal {
         // check if the skus in the rule is the subset of skus in the cart
         if (!productQuantityMap.keySet().containsAll(rule.keySet())) throw new InvalidParameterException();
         for (Map.Entry<String, Integer> entry : rule.entrySet()) {
-            if (minEntry == null || entry.getValue() < minEntry.getValue()) minEntry = entry;
+            if (minEntry == null || (entry.getValue() < minEntry.getValue() && entry.getValue() > 0)) minEntry = entry;
             String sku = entry.getKey();
             if (rule.get(sku) > productQuantityMap.get(sku)) {
                 // can't make a deal
