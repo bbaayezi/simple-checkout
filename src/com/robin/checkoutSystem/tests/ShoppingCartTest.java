@@ -2,16 +2,13 @@ package com.robin.checkoutSystem.tests;
 
 import com.robin.checkoutSystem.ShoppingCart;
 import com.robin.checkoutSystem.abstractClass.AbstractDeal;
-import com.robin.checkoutSystem.abstractClass.DealRule;
 import com.robin.checkoutSystem.deals.BuyNGetOneFreeDeal;
 import com.robin.checkoutSystem.deals.MealDeal;
 import com.robin.checkoutSystem.deals.MultiPricedDeal;
-import com.robin.checkoutSystem.interfaces.Deal;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
-import java.util.logging.Logger;
 
 import static org.junit.Assert.*;
 
