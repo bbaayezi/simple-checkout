@@ -33,7 +33,7 @@ public class ShoppingCart {
                 res += deal.getPrice();
             }
         }
-        return res;
+        return Math.round(res * 100.0) / 100.0;
     }
 
     public void setDealRules(List<AbstractDeal> deals) {
